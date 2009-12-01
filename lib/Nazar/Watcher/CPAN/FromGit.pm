@@ -1,5 +1,5 @@
 
-package Nazar::Watcher::CPAN::Git;
+package Nazar::Watcher::CPAN::FromGit;
 use Moose;
 use AnyEvent::MP qw(configure port rcv *SELF $NODE);
 use AnyEvent::MP::Global qw(grp_reg);
