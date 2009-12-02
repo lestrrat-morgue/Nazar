@@ -37,6 +37,13 @@ has max_active => (
     default => 10
 );
 
+has perl => (
+    is => 'ro',
+    isa => 'Str',
+    required => 1,
+    default => $^X
+);
+
 has work_dir => (
     is => 'ro',
 #    isa => 'File::Temp::Dir',
@@ -126,7 +133,7 @@ warn $build_dir;
                 CPAN::Shell->test($install);
             EOPL
             close($fh);
-            exec( $^X, $smoke_pl, $install, $work_dir, $build_dir, $download_dir, $output_log);
+            exec( $self->perl, $smoke_pl, $install, $work_dir, $build_dir, $download_dir, $output_log);
             exit 1;
         } else {
             my $w; $w = AE::child $pid => sub {
