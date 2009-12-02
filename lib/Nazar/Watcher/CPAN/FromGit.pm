@@ -10,6 +10,13 @@ use namespace::clean -except => qw(meta);
 
 extends 'Nazar::Watcher::CPAN';
 
+has perl => (
+    is => 'ro',
+    isa => 'Str',
+    required => 1,
+    default => $^X
+);
+
 has git => (
     is => 'ro',
     isa => 'Str',
@@ -58,7 +65,7 @@ sub start {
                 my $cwd = cwd();
                 my $guard = AnyEvent::Util::guard { chdir $cwd };
                 chdir $tempdir;
-                system($^X, 'Makefile.PL') == 0 or die;
+                system($self->perl, 'Makefile.PL') == 0 or die;
                 if (! -f 'MANIFEST') {
                     system($self->make, 'manifest') == 0 or die;
                 }
