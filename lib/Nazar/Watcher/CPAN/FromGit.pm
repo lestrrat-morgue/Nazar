@@ -53,51 +53,62 @@ sub start {
     configure nodeid => 'nazar/'; #  profile => $self->profile;
     grp_reg 'nazar', $NODE;
 
-    rcv $SELF, gitcommit => sub {
-        eval {
-            my ($repo, $sha1, $dist, $version) = @_;
-            my $tempdir = tempdir(CLEANUP => 1, TEMPDIR => 1);
-
-            system($self->git, 'clone', $repo, $tempdir) == 0 or die;
-
-            my $file;
-            {
-                my $cwd = cwd();
-                my $guard = AnyEvent::Util::guard { chdir $cwd };
-                chdir $tempdir;
-                system($self->perl, 'Makefile.PL') == 0 or die;
-                if (! -f 'MANIFEST') {
-                    system($self->make, 'manifest') == 0 or die;
-                }
-                system($self->make, 'dist');
-                while (glob('*.tar.gz')) {
-                    $file = File::Spec->catfile($tempdir, $_) and last;
-                }
-            }
-
-            if (! $dist) {
-                if ($repo =~ /:\/([^:]+)\.git/) {
-                    $dist = $1;
-                }
-            }
-            if (! $version) {
-                $version = strftime('%Y%m%d%H%M%S', localtime);
-            }
-
-            my %data = ( 
-                file => $file,
-                sha1 => $sha1,
-                repo => $repo,
-                dist => $dist,
-                version => $version,
-                tempdir => $tempdir, # keep it in memory
-            );
-            $self->context->queue_get( "CPAN" )->item_push( \%data );
-        };
-        if ($@) {
-            warn $@;
+    rcv $NODE, gitcommit => sub {
+        my ($repo, $sha1, $dist, $version) = @_;
+        my $w; $w = AE::idle sub { 
+            undef $w;
+            $self->run_test($repo, $sha1, $dist, $version);
         }
     };
+}
+
+sub run_test {
+    my ($self, $repo, $sha1, $dist, $version) = @_;
+
+    $version ||= POSIX::strftime('%Y%m%d%H%M%S', localtime);
+    eval {
+        my $tempdir = tempdir(CLEANUP => 1, TEMPDIR => 1);
+        my $git_dir = File::Spec->catfile($tempdir, "$dist-$version");
+
+        system($self->git, 'clone', $repo, $git_dir) == 0 or die;
+
+        my $file;
+        {
+            my $cwd = cwd();
+            my $guard = AnyEvent::Util::guard { chdir $cwd };
+            chdir $git_dir;
+            system($self->perl, 'Makefile.PL') == 0 or die;
+            if (! -f 'MANIFEST') {
+                system($self->make, 'manifest') == 0 or die;
+            }
+            system($self->make, 'dist');
+            while (glob('*.tar.gz')) {
+                $file = File::Spec->catfile($git_dir, $_) and last;
+            }
+        }
+
+        if (! $dist) {
+            if ($repo =~ /:\/([^:]+)\.git/) {
+                $dist = $1;
+            }
+        }
+        if (! $version) {
+            $version = strftime('%Y%m%d%H%M%S', localtime);
+        }
+
+        my %data = ( 
+            file => $file,
+            sha1 => $sha1,
+            repo => $repo,
+            dist => $dist,
+            version => $version,
+            tempdir => $tempdir, # keep it in memory
+        );
+        $self->context->queue_get( "CPAN" )->item_push( \%data );
+    };
+    if ($@) {
+        warn $@;
+    }
 }
 
 1;
