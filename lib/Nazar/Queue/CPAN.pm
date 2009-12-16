@@ -7,7 +7,7 @@ use MooseX::Types::Path::Class;
 use Nazar::FIFO;
 use Scalar::Util qw(weaken);
 use URI::Escape qw(uri_escape);
-use namespace::clean -except => qw(meta);
+use namespace::autoclean;
 
 extends 'Nazar::Queue';
 

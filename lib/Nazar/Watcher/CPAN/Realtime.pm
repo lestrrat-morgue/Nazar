@@ -2,7 +2,7 @@
 package Nazar::Watcher::CPAN::Realtime;
 use Moose;
 use AnyEvent::FriendFeed::Realtime;
-use namespace::clean -except => qw(meta);
+use namespace::autoclean;
 
 extends 'Nazar::Watcher::CPAN::FriendFeed';
 

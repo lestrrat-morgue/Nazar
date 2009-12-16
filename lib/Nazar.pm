@@ -1,7 +1,7 @@
 package Nazar;
 use Moose;
 use AnyEvent;
-use namespace::clean -except => qw(meta);
+use namespace::autoclean;
 
 has watchers => (
     traits => ['Array'],

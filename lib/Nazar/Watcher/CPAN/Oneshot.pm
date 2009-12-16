@@ -2,7 +2,7 @@ package Nazar::Watcher::CPAN::Oneshot;
 use Moose;
 use AnyEvent::HTTP;
 use JSON;
-use namespace::clean -except => qw(meta);
+use namespace::autoclean;
 
 extends 'Nazar::Watcher::CPAN::FriendFeed';
 

@@ -1,7 +1,7 @@
 
 package Nazar::Watcher::CPAN::FriendFeed;
 use Moose;
-use namespace::clean -except => qw(meta);
+use namespace::autoclean;
 
 extends 'Nazar::Watcher';
 

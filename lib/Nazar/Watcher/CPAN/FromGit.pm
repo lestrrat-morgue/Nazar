@@ -6,7 +6,7 @@ use AnyEvent::MP::Global qw(grp_reg);
 use Cwd;
 use File::Temp qw(tempdir);
 use POSIX qw(strftime);
-use namespace::clean -except => qw(meta);
+use namespace::autoclean;
 
 extends 'Nazar::Watcher::CPAN';
 

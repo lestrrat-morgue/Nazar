@@ -1,6 +1,6 @@
 package Nazar::Queue;
 use Moose;
-use namespace::clean -except => qw(meta);
+use namespace::autoclean;
 
 __PACKAGE__->meta->make_immutable();
 

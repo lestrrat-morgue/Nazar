@@ -4,7 +4,7 @@ use strict;
 # use Moose;
 use AnyEvent;
 use AnyEvent::Util qw(guard);
-use namespace::clean -except => qw(meta);
+use namespace::autoclean;
 
 sub new {
     my $class = shift;

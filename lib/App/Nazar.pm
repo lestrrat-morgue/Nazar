@@ -1,7 +1,7 @@
 package App::Nazar;
 use Moose;
 use Nazar;
-use namespace::clean -except => qw(meta);
+use namespace::autoclean;
 
 with qw(MooseX::Getopt MooseX::SimpleConfig);
 

@@ -21,7 +21,7 @@ requires 'MooseX::Types::Path::Class';
 requires 'POSIX';
 requires 'Scalar::Util';
 requires 'URI::Escape';
-requires 'namespace::clean';
+requires 'namespace::autoclean';
 
 
 WriteAll;

@@ -1,6 +1,6 @@
 package Nazar::Watcher;
 use Moose;
-use namespace::clean -except => qw(meta);
+use namespace::autoclean;
 
 has context => (
     is => 'ro',
